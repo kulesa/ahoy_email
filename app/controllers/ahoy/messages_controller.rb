@@ -21,7 +21,7 @@ module Ahoy
       signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), AhoyEmail.secret_token, url)
       publish :click, url: params[:url]
       if secure_compare(params[:signature], signature)
-        redirect_to url
+        redirect_to redirect_url(url)
       else
         redirect_to main_app.root_url
       end
@@ -53,6 +53,14 @@ module Ahoy
       res = 0
       b.each_byte { |byte| res |= byte ^ l.shift }
       res == 0
+    end
+
+    def redirect_url(url)
+      if url =~ /gogoair.*saml/
+        "https://gogoair.employeereferrals.com"
+      else
+        url
+      end
     end
   end
 end
